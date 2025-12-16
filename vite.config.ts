@@ -7,7 +7,6 @@ export default defineConfig({
     rollupOptions: {
       input: {
         popup: 'index.html',
-        sidepanel: 'sidepanel.html',
         background: 'src/background.ts',
         contentScript: 'src/contentScript.ts',
       },
@@ -15,7 +14,6 @@ export default defineConfig({
         entryFileNames: (chunk) => {
           if (chunk.name === 'background') return 'background.js';
           if (chunk.name === 'contentScript') return 'contentScript.js';
-          // popup/sidepanel JS can be hashed
           return 'assets/[name]-[hash].js';
         },
       },

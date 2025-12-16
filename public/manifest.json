@@ -17,16 +17,8 @@
     "service_worker": "background.js",
     "type": "module"
   },
-  "permissions": [
-    "scripting",
-    "activeTab",
-    "sidePanel",
-    "storage"
-  ],
+  "permissions": ["activeTab"],
   "host_permissions": ["https://mail.google.com/*"],
-  "side_panel": {
-    "default_path": "sidepanel.html"
-  },
   "content_scripts": [
     {
       "matches": ["https://mail.google.com/*"],
