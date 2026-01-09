@@ -355,7 +355,6 @@ export function SidePanelApp() {
 
     console.log('[MailPilot sidepanel] Applying email:', rewritten);
 
-    // Send message to background script, which will forward to Gmail tab
     chrome.runtime.sendMessage({
       type: 'APPLY_EMAIL',
       subject: rewritten.subject,
@@ -569,7 +568,7 @@ export function SidePanelApp() {
               onClick={handleApply}
               disabled={isTyping}
             >
-              {isTyping ? 'Typing...' : 'Apply to Gmail'}
+              {isTyping ? 'Typing...' : 'Apply to Email'}
             </button>
           </div>
         )}

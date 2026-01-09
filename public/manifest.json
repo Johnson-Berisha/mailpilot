@@ -28,9 +28,9 @@
   ],
   "host_permissions": [
     "https://mail.google.com/*",
-    "https://outlook.office.com/mail/*",
-    "https://outlook.live.com/mail/*",
-    "https://outlook.office365.com/mail/*"
+    "https://outlook.office.com/*",
+    "https://outlook.live.com/*",
+    "https://outlook.office365.com/*"
   ],
   "content_scripts": [
     {
@@ -51,7 +51,12 @@
   "web_accessible_resources": [
     {
       "resources": ["icons/*"],
-      "matches": ["https://mail.google.com/*"]
+      "matches": [
+        "https://mail.google.com/*",
+        "https://outlook.live.com/*",
+        "https://outlook.office.com/*",
+        "https://outlook.office365.com/*"
+      ]
     }
   ]
 }

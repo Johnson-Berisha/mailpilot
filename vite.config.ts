@@ -10,11 +10,13 @@ export default defineConfig({
         sidepanel: 'sidepanel.html',
         background: 'src/background.ts',
         contentScript: 'src/contentScript.ts',
+        outlookContentScript: 'src/outlookContentScript.ts',
       },
       output: {
         entryFileNames: (chunk) => {
           if (chunk.name === 'background') return 'background.js';
           if (chunk.name === 'contentScript') return 'contentScript.js';
+          if (chunk.name === 'outlookContentScript') return 'outlookContentScript.js';
           return 'assets/[name]-[hash].js';
         },
       },

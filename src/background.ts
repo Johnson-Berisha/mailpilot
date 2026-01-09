@@ -1,22 +1,21 @@
 console.log('[MailPilot background] loaded');
 
-chrome.tabs.onUpdated.addListener(async (tabId, _info, tab) => {
+const GMAIL_ORIGIN = 'https://mail.google.com';
+const OUTLOOK_ORIGIN = 'https://outlook.office.com';
+
+// Enable side panel on Gmail + Outlook tabs
+chrome.tabs.onUpdated.addListener((tabId, _info, tab) => {
   if (!tab.url) return;
 
   const url = new URL(tab.url);
+  const isSupported =
+    url.origin === GMAIL_ORIGIN || url.origin === OUTLOOK_ORIGIN;
 
-  if (url.origin === 'https://mail.google.com') {
-    await chrome.sidePanel.setOptions({
-      tabId,
-      path: 'sidepanel.html',
-      enabled: true,
-    });
-  } else {
-    await chrome.sidePanel.setOptions({
-      tabId,
-      enabled: false,
-    });
-  }
+  chrome.sidePanel.setOptions({
+    tabId,
+    path: 'sidepanel.html',
+    enabled: isSupported,
+  });
 });
 
 chrome.tabs.onActivated.addListener(async ({ tabId }) => {
@@ -24,23 +23,24 @@ chrome.tabs.onActivated.addListener(async ({ tabId }) => {
   if (!tab.url) return;
 
   const url = new URL(tab.url);
-  const isGmail = url.origin === 'https://mail.google.com';
+  const isSupported =
+    url.origin === GMAIL_ORIGIN || url.origin === OUTLOOK_ORIGIN;
 
-  await chrome.sidePanel.setOptions({
+  chrome.sidePanel.setOptions({
     tabId,
     path: 'sidepanel.html',
-    enabled: isGmail,
+    enabled: isSupported,
   });
 });
 
-chrome.runtime.onMessage.addListener(async (message, sender, _sendResponse) => {
+chrome.runtime.onMessage.addListener(async(message, sender, _sendResponse) => {
   if (message?.type === 'OPEN_SIDE_PANEL') {
     console.log('[MailPilot bg] got OPEN_SIDE_PANEL', message.payload);
 
     chrome.storage.local.set(
-      { 
+      {
         mailpilotEmailData: message.payload,
-        mailpilotActiveTabId: sender.tab?.id,   // <‑‑ store the tab id here
+        mailpilotActiveTabId: sender.tab?.id,
       },
       () => console.log('[MailPilot bg] stored mailpilotEmailData + tabId'),
     );
@@ -50,17 +50,17 @@ chrome.runtime.onMessage.addListener(async (message, sender, _sendResponse) => {
     } else if (sender.tab?.windowId !== undefined) {
       chrome.sidePanel.open({ windowId: sender.tab.windowId });
     }
+
+    return true;
   }
 
-  // Handle rewrite request
   if (message?.type === 'REWRITE_EMAIL') {
     const { email, tone, translate } = message;
     
     console.log('[MailPilot bg] Got REWRITE_EMAIL request', { email, tone, translate });
     
     try {
-      // IMPORTANT: Replace with your Render URL if deployed, or keep localhost for local dev
-      const backendUrl = 'https://mailpilot-backend-21rf.onrender.com/api/rewrite'; // Change to your Render URL when deployed
+      const backendUrl = 'https://mailpilot-backend-21rf.onrender.com/api/rewrite';
       
       console.log('[MailPilot bg] Calling backend:', backendUrl);
       
@@ -87,12 +87,10 @@ chrome.runtime.onMessage.addListener(async (message, sender, _sendResponse) => {
       const data = await response.json();
       console.log('[MailPilot bg] Got rewritten data:', data);
       
-      // Store in storage so side panel can pick it up
       chrome.storage.local.set(
         { mailpilotRewrittenEmail: data.rewritten },
         () => {
           console.log('[MailPilot bg] Stored rewritten email');
-          // Also send via message for immediate update
           chrome.runtime.sendMessage({
             type: 'REWRITE_COMPLETE',
             rewritten: data.rewritten,
@@ -100,17 +98,14 @@ chrome.runtime.onMessage.addListener(async (message, sender, _sendResponse) => {
         }
       );
       
-      // Return true to keep message channel open for async operations
       return true;
     } catch (error) {
       console.error('[MailPilot] Rewrite error:', error);
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       
-      // Store error in storage
       chrome.storage.local.set(
         { mailpilotRewriteError: errorMessage },
         () => {
-          // Also send via message
           chrome.runtime.sendMessage({
             type: 'REWRITE_ERROR',
             error: errorMessage,
@@ -145,7 +140,7 @@ chrome.runtime.onMessage.addListener(async (message, sender, _sendResponse) => {
 
     return true;
   }
-  
-  // Return true to indicate we'll send response asynchronously
+
   return true;
 });
+
