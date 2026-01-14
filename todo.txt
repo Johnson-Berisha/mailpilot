@@ -1,0 +1,18 @@
+
+completed:
+
+
+// DARK MODE 
+
+
+-------------
+
+will do:
+
+add support for more browsers
+
+add tool bar support for more email providers
+
+add more AI models maybe?
+
+maybe add custom API key
