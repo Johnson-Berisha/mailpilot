@@ -1,6 +1,14 @@
+![Version](https://img.shields.io/github/v/release/t33devv/mailpilot)<br>
+![License](https://img.shields.io/github/license/t33devv/mailpilot)
+![Contributors](https://img.shields.io/github/contributors/t33devv/mailpilot)<br>
+![Issues](https://img.shields.io/github/issues/t33devv/mailpilot)
+![PRs](https://img.shields.io/github/issues-pr/t33devv/mailpilot)<br>
+![Stars](https://img.shields.io/github/stars/t33devv/mailpilot)
+![Forks](https://img.shields.io/github/forks/t33devv/mailpilot)
+
 # MailPilot (one of my better projects...)
 
-AI email writer and translator built into Gmail.
+AI email writer and translator built into Gmail. <br><br>
 
 ## Overview
 
